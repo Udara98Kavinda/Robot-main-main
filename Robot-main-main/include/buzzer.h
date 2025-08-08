@@ -4,7 +4,7 @@
 #include <Arduino.h>
 
 #define buzzer 12
-
+void buzzer_on(int count, int t);
 
 void buzzer_on(int count, int t){
     for(int i=0; i<count; i++){
