@@ -5,6 +5,7 @@
 #include "buzzer.h"
 #include "encoder.h"
 #include "turning.h"
+#include "action.h"
 
 int thresholds[9];
 int readings[9];
@@ -19,6 +20,9 @@ int integral_error = 0;
 
 void setup() {
   pinMode(buzzer, OUTPUT);
+  for(int i = 43;i<52;i++){
+    pinMode(i, INPUT);
+  }
 
   Serial.begin(9600);
   buzzer_on(1, 100);
@@ -26,9 +30,10 @@ void setup() {
   motor_pin_configuration();
   buzzer_on(3, 100);
   Serial.println("IR sensors calibration started.");
-  calibrate_IR_sensors(thresholds, 50); // Calibrate IR sensors with 500 samples, store thresholds
+  calibrate_IR_sensors(thresholds, 300); // Calibrate IR sensors with 200 samples, store thresholds
   Serial.println("IR sensors calibration completed.");
   buzzer_on(3, 100);
+  delay(3000);
 
   attachInterrupt(digitalPinToInterrupt(ENCODER_LEFT_A), countEncLeft, RISING);
   attachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT_A), countEncRight, RISING);
@@ -40,6 +45,7 @@ void loop() {
   digitalize_with_calibrated_threshold(readings, thresholds, digital);
   error = calculate_error(digital);
   pid_output = compute_pid(error, previous_error, KP, KD);
+  pid_output = map(pid_output, 0, 200, 0, 150);
   previous_error = error;
   //encorder_pid_output = compute_pid_encoder(encoderCount_Left, encoderCount_Right);
 
@@ -52,11 +58,43 @@ void loop() {
   //Serial.println(" Encoder PID Output: " + String(encorder_pid_output));
 
 
-  Serial.println("Forward");
+  //Serial.println("Forward");
   //left_motor(100, 1, 0);
   //right_motor(100, 1, 0);
-  forward(100, 100, 0); // Use PID output for correction forward( leftSpeed,  rightSpeed,  error);
-  delay(1000);
+  forward(105, 90, pid_output); // Use PID output for correction forward( leftSpeed,  rightSpeed,  error);
+  
+
+    if(digital[0] == 1 && digital[1] == 1 && digital[2] == 1 && digital[3] == 1 && digital[4] == 1 && digital[5] == 1 && digital[6] == 1 && digital[7] == 1 && digital[8] == 1 ) { //cross
+        Serial.println("Cross detected: Cross" );        
+        backward(100,100,0);
+        buzzer_on(10, 100);
+        stopMotors();
+        delay(5000);
+        forward(105, 90, pid_output);
+        //handleSpecialCross("cross", readings, thresholds);
+    }else if ((digital[0] == 1 && digital[1] == 1 && digital[2] == 1 && digital[3] == 1) && digital[4]==1){
+      Serial.println("Cross detected: T-Left" );
+      backward(100,100,0);
+      stopMotors();
+      buzzer_on(5, 100);
+      delay(5000);
+      forward(105, 90, pid_output);
+      //handleSpecialCross("t_left", readings, thresholds);
+    }else if ((digital[5] == 1 && digital[6] == 1 && digital[7] == 1 && digital[8] == 1) && digital[4]==1){
+      Serial.println("Cross detected: T-Right" );
+      backward(100,100,0);
+      stopMotors();
+      buzzer_on(2, 100);
+      delay(5000);
+      forward(105, 90, pid_output);
+      //handleSpecialCross("t_right", readings, thresholds);
+    }else if(digital[0] == 0 && digital[1] == 0 && digital[2] == 0 && digital[3] == 0 && digital[4] == 0 && digital[5] == 0 && digital[6] == 0 && digital[7] == 0 && digital[8] == 0){
+      backward(100,100,0);
+      stopMotors();
+    }
+    
+
+  /*delay(1000);
   Serial.println("Turning left");
   turnLeft();  
   delay(1000);
@@ -65,4 +103,5 @@ void loop() {
   Serial.println("Turning right");
   turnRight();
   delay(1000);
+  */
 }
