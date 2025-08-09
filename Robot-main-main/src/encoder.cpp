@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include "encorder.h" 
+#include "encoder.h" 
 
 volatile long encoderCount_Left = 0;
 volatile long encoderCount_Right = 0;
