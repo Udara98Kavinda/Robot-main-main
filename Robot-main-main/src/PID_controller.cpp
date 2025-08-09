@@ -5,7 +5,7 @@
 
 int calculate_error(const int digital[9]) {
     // Weights: L3,R3=30, L2,R2=20, L1,R1=10, L0,R0=0; negative for left
-    const int weights[9] = {-20, -15, -10, -5, 0, 5, 10, 15, 20};
+    const int weights[9] = {-8, -6, -4, -2, 0, 2, 4, 6, 8};
     int error = 0;
     for (int i = 0; i < 9; i++) {
         error += weights[i] * digital[i]; 

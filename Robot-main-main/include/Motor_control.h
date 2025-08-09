@@ -13,7 +13,8 @@
 
 
 void motor_pin_configuration();
-void setMotorSpeed(int leftSpeed, int rightSpeed, int error);
+void right_motor(int speed, bool direction, int error);
+void left_motor(int speed, bool direction, int error);
 void forward(int leftSpeed, int rightSpeed, int error);
 void backward(int leftSpeed, int rightSpeed, int error);
 void stopMotors();

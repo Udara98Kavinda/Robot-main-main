@@ -11,17 +11,54 @@ void motor_pin_configuration() {
   pinMode(RM_BW, OUTPUT);
 }
 
-void setMotorSpeed(int leftSpeed, int rightSpeed, int error) {
-  analogWrite(LM_EN, leftSpeed + error);
-  analogWrite(RM_EN, rightSpeed - error);
+void right_motor(int speed, bool direction, int error) {
+    if(direction == 1){ // Forward
+        digitalWrite(RM_FW, HIGH);
+        digitalWrite(RM_BW, LOW);
+    }else{ // Backward
+        digitalWrite(RM_FW, LOW);
+        digitalWrite(RM_BW, HIGH);
+    }
+    analogWrite(RM_EN, speed - error);
+}
+
+void left_motor(int speed, bool direction, int error){
+    if(direction == 1){ // Forward
+        digitalWrite(LM_FW, HIGH);
+        digitalWrite(LM_BW, LOW);
+    }else{ // Backward
+        digitalWrite(LM_FW, LOW);
+        digitalWrite(LM_BW, HIGH);
+    }
+    analogWrite(LM_EN, speed + error);
 }
 
 void forward(int leftSpeed, int rightSpeed, int error) {
-  digitalWrite(LM_FW, HIGH);
-  digitalWrite(LM_BW, LOW);
+  right_motor(rightSpeed, 1, error);
+  left_motor(leftSpeed, 1, error);
+  
+}
+
+void backward(int leftSpeed, int rightSpeed, int error) {
+  right_motor(rightSpeed, 0, error);
+  left_motor(leftSpeed, 0, error);
+}
+
+void stopMotors() {
+  right_motor(0, 0, 0);
+  left_motor(0, 0, 0);
+}
+/*
+void forward(int Speed, int motor, int error) {
+  if (motor == 1) {
   digitalWrite(RM_FW, HIGH);
   digitalWrite(RM_BW, LOW);
-  setMotorSpeed(leftSpeed, rightSpeed, error);
+  setMotorSpeed(Speed, motor, error);
+  } else {
+  digitalWrite(LM_FW, HIGH);
+  digitalWrite(LM_BW, LOW);
+  }
+  
 }
 
 void backward(int leftSpeed, int rightSpeed, int error) {
@@ -30,8 +67,4 @@ void backward(int leftSpeed, int rightSpeed, int error) {
   digitalWrite(RM_FW, LOW);
   digitalWrite(RM_BW, HIGH);
   setMotorSpeed(leftSpeed, rightSpeed, error);
-}
-
-void stopMotors() {
-  setMotorSpeed(0, 0, 0);
-}
+}*/
