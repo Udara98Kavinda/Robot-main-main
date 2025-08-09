@@ -3,12 +3,12 @@
 #include "action.h"
 #include "Get_readings.h"
 #include "turning.h"
+
 #include <Arduino.h>
 
 // Array to store detected cross types
 char crossArray[50];
 int crossIndex = 0;
-
 
 // Helper: Stop, reverse slowly, then go forward
 void handleCrossApproach() {
@@ -27,7 +27,7 @@ void handleCrossApproach() {
 }
 
 // Main cross detection handler
-void handleSpecialCross(const char* crossType, const int analog_readings[9], const int thresholds[9]) {
+void handleSpecialCross(int crossType, const int analog_readings[9], const int thresholds[9]) {
     int irArray[9];
     // Move a bit forward before checking
     forward(100, 100, 0);
@@ -35,7 +35,7 @@ void handleSpecialCross(const char* crossType, const int analog_readings[9], con
     stopMotors();
     digitalize_with_calibrated_threshold(analog_readings, thresholds, irArray);
 
-    if (strcmp(crossType, "t_left") == 0) {
+    if (crossType == 2) { // T-Left
         bool tCross = (irArray[3] == 1 || irArray[4] == 1 || irArray[5] == 1);
         bool allZero = (irArray[0] == 0 && irArray[1] == 0 && irArray[2] == 0 && irArray[3] == 0 && irArray[4] == 0 && irArray[5] == 0 && irArray[6] == 0 && irArray[7] == 0 && irArray[8] == 0);
         if (tCross) {
@@ -44,14 +44,15 @@ void handleSpecialCross(const char* crossType, const int analog_readings[9], con
             crossArray[crossIndex++] = 'L';
             // Turn left
             turnLeft();
-        }
+        }  
     } 
-    else if (strcmp(crossType, "t_right") == 0) {
+    else if (crossType == 3) { // T-Right
         turnRight();
         // Move forward and turn right
         //Turn right
+        crossType = 0;  
     } 
-    else if (strcmp(crossType, "cross") == 0) {
+    else if (crossType == 1) { // Cross
         bool allOne = (irArray[0] == 1 && irArray[1] == 1 && irArray[2] == 1 && irArray[3] == 1 && irArray[4] == 1 && irArray[5] == 1 && irArray[6] == 1 && irArray[7] == 1 && irArray[8] == 1);
         bool allZero = (irArray[0] == 0 && irArray[1] == 0 && irArray[2] == 0 && irArray[3] == 0 && irArray[4] == 0 && irArray[5] == 0 && irArray[6] == 0 && irArray[7] == 0 && irArray[8] == 0);
         bool plusCross = (irArray[3] == 1 || irArray[4] == 1 || irArray[5] == 1);
@@ -69,4 +70,5 @@ void handleSpecialCross(const char* crossType, const int analog_readings[9], con
             crossArray[crossIndex++] = 'R';
         }
     }
+    crossType = 0;  
 }

@@ -45,9 +45,27 @@ void backward(int leftSpeed, int rightSpeed, int error) {
 }
 
 void stopMotors() {
-  right_motor(0, 0, 0);
-  left_motor(0, 0, 0);
+  digitalWrite(RM_FW, HIGH);
+  digitalWrite(RM_BW, HIGH);
+  digitalWrite(LM_FW, HIGH);
+  digitalWrite(LM_BW, HIGH);
+  analogWrite(RM_EN, 100);
+  analogWrite(LM_EN, 100);
 }
+
+void stopMotors2(bool right_motor, bool left_motor) {
+  if(right_motor) {
+    digitalWrite(RM_FW, HIGH);
+    digitalWrite(RM_BW, HIGH);
+    analogWrite(RM_EN, 100);
+  }
+  if(left_motor) {
+    digitalWrite(LM_FW, HIGH);
+    digitalWrite(LM_BW, HIGH);
+    analogWrite(LM_EN, 100);
+  }
+}
+
 /*
 void forward(int Speed, int motor, int error) {
   if (motor == 1) {

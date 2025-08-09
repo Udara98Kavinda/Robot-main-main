@@ -18,5 +18,6 @@ void left_motor(int speed, bool direction, int error);
 void forward(int leftSpeed, int rightSpeed, int error);
 void backward(int leftSpeed, int rightSpeed, int error);
 void stopMotors();
+void stopMotors2(bool right_motor, bool left_motor);
 
 #endif // MOTOR_CONTROL_H
