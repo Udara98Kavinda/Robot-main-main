@@ -8,9 +8,9 @@
 #define kI  0.0 // Integral gain (not used in this example)
 
 //=============== Encoder ================================
-#define KPe  5.0 // Proportional gain for encoder
-#define KDe  10 // Derivative gain for encoder
-#define KIe  1
+#define KPe  15//20 // Proportional gain for encoder
+#define KDe 10 //6.8// 10 // Derivative gain for encoder
+#define KIe 5 //2.8// 5
 
 //=============== Gyro ================================
 #define Kpc  10.0

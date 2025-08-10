@@ -31,6 +31,7 @@ int encoder_error = 0;
 int previous_encoder_error = 0;
 int encoder_pid_output = 0;
 int encoder_sign = 0;
+int encoder_reading_zero = 0;
 
 //====== Gyro Initialization ======
 float pid_output_gyro = 0;
@@ -58,13 +59,19 @@ void setup() {
   calibrate_IR_sensors(thresholds, 100); // Calibrate IR sensors with 200 samples, store thresholds
   Serial.println("IR sensors calibration completed.");
   buzzer_on(3, 100);
-  delay(3000);
+  //delay(3000);
 
   attachInterrupt(digitalPinToInterrupt(ENCODER_LEFT_A), countEncLeft, RISING);
   attachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT_A), countEncRight, RISING);
 }
 
 void loop() {
+  encoder_reading_zero ++;
+  if(encoder_reading_zero > 1000) {
+    encoderCount_Left = 0;
+    encoderCount_Right = 0;
+    Serial.println("Encoder counts reset to zero.");
+  }
 
   //========= IR PID ==========
   read_IR_sensors(readings);
@@ -85,7 +92,7 @@ void loop() {
     encoder_sign = 1;
   }
 
-  encoder_pid_output = map(abs(encoder_pid_output), 0, 1024, 0, 150)*encoder_sign;
+  encoder_pid_output = map(abs(encoder_pid_output), 0, 900, 0, 150)*encoder_sign;
   Serial.print("Encoder PID Output: "); Serial.println(encoder_pid_output);
 /*
   compass.read();
@@ -106,6 +113,7 @@ void loop() {
     delay(500);
   pid_output_gyro = (headingPID(initial_heading, heading))*1;
   */
+
   
   //Serial.print("Leftcounter: " + String(encoderCount_Left));
   //Serial.println(" Rightcounter: " + String(encoderCount_Right));
@@ -115,8 +123,8 @@ void loop() {
   //Serial.println("Forward");
   //left_motor(100, 1, 0);
   //right_motor(100, 1, 0);
-  int left_speed = 105 - 0;
-  int right_speed = 90 + 10;
+  int left_speed = 100;
+  int right_speed = 150;
   forward(left_speed, right_speed, encoder_pid_output); // Use PID output for correction forward( leftSpeed,  rightSpeed,  error);
   /*
     if(digital[0] == 1 && digital[1] == 1 && digital[2] == 1 && digital[3] == 1 && digital[4] == 1 && digital[5] == 1 && digital[6] == 1 && digital[7] == 1 && digital[8] == 1 ) { //cross
