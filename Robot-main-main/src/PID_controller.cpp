@@ -37,8 +37,7 @@ int calculate_error_encoder(long encoderCount_Left, long encoderCount_Right) {
 int compute_pid_encoder(int error, int previous_error, float Kp, float Kd, float Ki) {
     // Compute the PID output based on encoder counts
     int derivative = error - previous_error;
-    int integral = previous_error + error; // Integral term, not used in this example
-    int pid_output = Kp * error + Kd * derivative + Ki * integral;
+    int pid_output = Kp * error + Kd * derivative;
     return pid_output;
 }
 

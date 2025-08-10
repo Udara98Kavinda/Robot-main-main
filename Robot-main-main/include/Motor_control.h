@@ -20,4 +20,6 @@ void backward(int leftSpeed, int rightSpeed, int error);
 void stopMotors();
 void stopMotors2(bool right_motor, bool left_motor);
 
+void move_forward_250_counts(int baseSpeed);
+
 #endif // MOTOR_CONTROL_H

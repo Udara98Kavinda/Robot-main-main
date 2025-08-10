@@ -76,10 +76,38 @@ void loop() {
   //========= IR PID ==========
   read_IR_sensors(readings);
   digitalize_with_calibrated_threshold(readings, thresholds, digital);
-  error = calculate_error(digital);
-  pid_output = compute_pid(error, previous_error, KP, KD);
-  //pid_output = map(pid_output, 0, 200, 0, 150);
-  previous_error = error;
+  bool cross = digital[0] && digital[1] && digital[2] && digital[3] && digital[4] && digital[5] && digital[6] && digital[7] && digital[8];
+  bool t_left = (digital[0] && digital[1] && digital[2] && digital[3]) && digital[4];
+  bool t_right = (digital[5] && digital[6] && digital[7] && digital[8]) && digital[4];
+  bool white = (!digital[0]) && (!digital[1]) && (!digital[2]) && (!digital[3]) && (!digital[4]) && (!digital[5]) && (!digital[6]) && (!digital[7]) && (!digital[8]);
+
+  if(cross == true || t_left == true || t_right == true || white == true) {
+    if(cross) {
+      Serial.println("Cross detected: Cross");
+      buzzer_on(1, 50);
+      handleSpecialCross("cross", digital, thresholds);
+    } else if (t_left) {
+      Serial.println("Cross detected: T-Left");
+      buzzer_on(2, 20);
+      handleSpecialCross("t_left", digital, thresholds);
+    } else if (t_right) {
+      Serial.println("Cross detected: T-Right");
+      buzzer_on(3, 20);
+      handleSpecialCross("t_right", digital, thresholds);
+    }else if(white) {
+      Serial.println("Cross detected: White");
+      buzzer_on(1, 200);
+      //turn 180
+      //bit forward
+    }
+  }
+  else{
+    error = calculate_error(digital);
+    pid_output = compute_pid(error, previous_error, KP, KD);
+    pid_output = map(pid_output, 0, 200, 0, 150);
+    previous_error = error;
+    forward(105, 90, 0);
+  }
 
   //========== Encoder PID ==========
   encoder_error = calculate_error_encoder(encoderCount_Left, encoderCount_Right);
