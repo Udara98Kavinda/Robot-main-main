@@ -3,6 +3,7 @@
 #include "Motor_control.h"
 #include "Get_readings.h"
 #include "encoder.h"
+#include "PID_controller.h"
 
 // Define motor speed
 #define SPEED 150
@@ -88,4 +89,32 @@ void turn180(bool left) {
         }
     }
     stopMotors();
+}
+
+//===================== Gyro ========================
+void turn90(bool clockwise, float currentHeading) {
+    float startHeading = currentHeading;
+    float targetHeading = startHeading + (clockwise ? 90 : -90);
+    if (targetHeading >= 360) targetHeading -= 360;
+    if (targetHeading < 0) targetHeading += 360;
+
+    while (abs(targetHeading - currentHeading) > 2) { // 2° tolerance
+        float correction = headingPID(targetHeading, currentHeading);
+        // Motor control placeholder:
+        // setMotorSpeed(correction, -correction);
+    }
+    // setMotorSpeed(0, 0); // stop motors
+}
+
+void turn180_gyro(float currentHeading) {
+    float startHeading = currentHeading;
+    float targetHeading = startHeading + 180;
+    if (targetHeading >= 360) targetHeading -= 360;
+
+    while (abs(targetHeading - currentHeading) > 2) {
+        float correction = headingPID(targetHeading, currentHeading);
+        // Motor control placeholder:
+        // setMotorSpeed(correction, -correction);
+    }
+    // setMotorSpeed(0, 0); // stop motors
 }

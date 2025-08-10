@@ -7,12 +7,24 @@
 #define KD  4.0 // Derivative gain 0.5
 #define kI  0.0 // Integral gain (not used in this example)
 
-#define KPe  1.0 // Proportional gain for encoder
-#define KDe  0.5 // Derivative gain for encoder
+//=============== Encoder ================================
+#define KPe  5.0 // Proportional gain for encoder
+#define KDe  10 // Derivative gain for encoder
+#define KIe  1
+
+//=============== Gyro ================================
+#define Kpc  10.0
+#define Kic  0.0
+#define Kdc  10.0
 
 int calculate_error(const int digital[9]);
 int compute_pid(int error, int pre_error, float Kp, float Kd);
-int calculate_error_encorder(long encoderCount_Left, long encoderCount_Right);
-//int compute_pid_encoder(long encoderCount_Left, long encoderCount_Right);
+
+int calculate_error_encoder(long encoderCount_Left, long encoderCount_Right);
+int compute_pid_encoder(int error, int previous_error, float Kp, float Kd, float Ki);
+
+
+// PID to move towards target heading
+float headingPID(float targetHeading, float currentHeading);
 
 #endif // PID_CONTROLLER_H
